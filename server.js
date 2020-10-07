@@ -145,8 +145,8 @@ app.get('/items', (req, res) => {
 })
 
 
-// List new item (without authorization check)
-app.post('/items', (req, res) => {
+// List new item
+app.post('/items', checkForApiKey, (req, res) => {
     const newItem = {
         id: uuidv4(),
         title:  req.body.title,
@@ -169,8 +169,8 @@ app.post('/items', (req, res) => {
 })
 
 
-// Modify item (without authorization check)
-app.put('/items/:id', (req, res) => {
+// Modify item
+app.put('/items/:id', checkForApiKey, (req, res) => {
     const result = items.find(t => t.id == req.params.id)
     if(result !== undefined) {
         for(const key in req.body) {
@@ -184,8 +184,8 @@ app.put('/items/:id', (req, res) => {
 })
 
 
-// Delete item (without authorization check)
-app.delete('/items/:id', (req, res) => {
+// Delete item
+app.delete('/items/:id', checkForApiKey, (req, res) => {
     const result = items.findIndex(t => t.id == req.params.id)
     if(result !== -1) {
         items.splice(result, 1)
