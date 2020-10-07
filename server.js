@@ -14,6 +14,7 @@ const passport = require('passport');
 const { Passport } = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 
+
 passport.use(new BasicStrategy(
     function(username, password, done) {
   
@@ -35,6 +36,8 @@ passport.use(new BasicStrategy(
         return done(null, username);
     }
 ));
+
+
 ///////ApiKey validation
 function validateApiKey (username) {
     let apikey = null;
@@ -65,6 +68,8 @@ function validateApiKey (username) {
     console.log(apikey)
     return apikey
 }
+
+
 ///////ApiKey Check
 function checkForApiKey(req, res, next)
 {
@@ -83,10 +88,14 @@ function checkForApiKey(req, res, next)
   // pass the control to the next handler in line
   next();
 }
+
+
 ///////Get all users Testing
 app.get('/user', (req, res) => {
     res.json({users})
 })
+
+
 ///////User regisration
 app.post('/register', (req, res) => {
 
@@ -114,17 +123,78 @@ app.post('/register', (req, res) => {
 
     res.sendStatus(200)
 })
+
+
 ///////Login
 app.get('/login', passport.authenticate('basic', { session: false }), (req, res) => {
     res.sendStatus(200).json({status: "OK"});
 });
+
+
 ///////ApiKey Testing
 app.get('/apiKeyTest', checkForApiKey, (req, res) => {
     res.json({
       yourResource: "ApiOK"
     })
 });
-//////////////
+
+
+// Get items
+app.get('/items', (req, res) => {
+    res.json({items})
+})
+
+
+// List new item (without authorization check)
+app.post('/items', (req, res) => {
+    const newItem = {
+        id: uuidv4(),
+        title:  req.body.title,
+        description: req.body.description,
+        category: req.body.category,
+        location: req.body.location,
+        images: {
+            image1: req.body.images.image1,
+            image2: req.body.images.image2,
+            image3: req.body.images.image3,
+            image4: req.body.images.image4
+        },
+        price: req.body.price,
+        postDate: req.body.postDate,
+        deliverType: req.body.deliverType,
+        contactInfo: req.body.contactInfo
+    }
+    items.push(newItem)
+    res.sendStatus(200)
+})
+
+
+// Modify item (without authorization check)
+app.put('/items/:id', (req, res) => {
+    const result = items.find(t => t.id == req.params.id)
+    if(result !== undefined) {
+        for(const key in req.body) {
+            result[key] = req.body[key]
+        }
+        res.sendStatus(200)
+    } else {
+        res.sendStatus(404).json("Item not found")
+    }
+    
+})
+
+
+// Delete item (without authorization check)
+app.delete('/items/:id', (req, res) => {
+    const result = items.findIndex(t => t.id == req.params.id)
+    if(result !== -1) {
+        items.splice(result, 1)
+        res.sendStatus(200)
+    } else {
+        res.sendStatus(404).json("Item not found")
+    }
+})
+
 
 let apiInstance = null;
 exports.start = () => {
@@ -161,3 +231,24 @@ let users = [
         apikey: null
     }
 ];
+
+
+let items = [
+    {
+        id: uuidv4(),
+        title: "Kuukupööpötin",
+        description: "Ihan ite nikkaroin",
+        category: "Koriste-esineet",
+        location: "Oulu",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 100.00,
+        postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    }
+]
