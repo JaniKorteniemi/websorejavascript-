@@ -1,7 +1,10 @@
-const express = require('express')
-const bodyparser = require('body-parser')
-const { v4: uuidv4 } = require('uuid')
-const app = express()
+const express = require('express');
+const bodyparser = require('body-parser');
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+
+const app = express();
+//const users = require('./services/users');
 const port = 3000
 
 app.use(bodyparser.json());
@@ -191,6 +194,7 @@ app.delete('/items/:id', (req, res) => {
         res.sendStatus(404).json("Item not found")
     }
 })
+
 
 let apiInstance = null;
 exports.start = () => {
