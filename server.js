@@ -2,6 +2,8 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const http = require('http')
+const url = require('url')
 
 const fs = require('fs');
 const multer  = require('multer');
@@ -158,31 +160,6 @@ app.get('/items', (req, res) => {
     res.json({items})
 })
 
-app.get('/items/search', (req, res) => {
-    var rqery = req.query;
-    var qs = Object.keys(rqery)[0];
-    var qvalue = Object.values(rqery)[0]
-    var result = [];
-    if (qs === 'category' || qs === 'location' || qs === 'postDate'){
-        items.forEach(item => {
-            if (item[qs] === qvalue){
-                console.log("Yes" + item.qs + " is same as " + qvalue)
-                result.push(item)
-            }else{
-                console.log("No" + item.qs + " is not same as " + qvalue)
-            }
-        });
-        console.log("result: " + result + result.length)
-        if(result !== undefined && result.length != 0)
-        {
-            res.json(result);
-        } else {
-            res.json({status: "ITEM Not Found"});
-        }
-    }else{
-        res.sendStatus(400);
-    }
-})
 
 // List new item (without authorization check)
 app.post('/items', multerUpload.array('img', 4), (req, res) => {
@@ -221,8 +198,8 @@ app.post('/items', multerUpload.array('img', 4), (req, res) => {
 })
 
 
-// Modify item (without authorization check)
-app.put('/items/:id', (req, res) => {
+// Modify item
+app.put('/items/:id', checkForApiKey, (req, res) => {
     const result = items.find(t => t.id == req.params.id)
     if(result !== undefined) {
         for(const key in req.body) {
@@ -236,12 +213,33 @@ app.put('/items/:id', (req, res) => {
 })
 
 
-// Delete item (without authorization check)
-app.delete('/items/:id', (req, res) => {
+// Delete item
+app.delete('/items/:id', checkForApiKey, (req, res) => {
     const result = items.findIndex(t => t.id == req.params.id)
     if(result !== -1) {
         items.splice(result, 1)
         res.sendStatus(200)
+    } else {
+        res.sendStatus(404).json("Item not found")
+    }
+})
+
+
+// Search items
+app.get('/items/search', (req, res) => {
+    var qs = url.parse(req.url, true).query
+    var search_items = []
+
+    for(const param in qs) {
+        if(search_items.length === 0) {
+            search_items = items.filter(item => item[param] === qs[param])
+        } else {
+            search_items = search_items.filter(item => item[param] === qs[param])
+        }
+    }
+
+    if(search_items.length > 0) {
+        res.json(search_items)
     } else {
         res.sendStatus(404).json("Item not found")
     }
@@ -351,6 +349,23 @@ let items = [
         },
         price: 100.00,
         postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    },
+    {
+        id: uuidv4(),
+        title: "Puuhöylä",
+        description: "Ei ollu puuhöylä",
+        category: "Työkalut",
+        location: "Helsinki",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 145.00,
+        postDate: "2020-10-08",
         deliverType: true,
         contactInfo: "t8hosa01@students.oamk.fi"
     }
