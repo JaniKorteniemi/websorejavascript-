@@ -2,6 +2,8 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const http = require('http')
+const url = require('url')
 
 const app = express();
 //const users = require('./services/users');
@@ -196,6 +198,27 @@ app.delete('/items/:id', checkForApiKey, (req, res) => {
 })
 
 
+// Search items
+app.get('/items/search', (req, res) => {
+    var qs = url.parse(req.url, true).query
+    var search_items = []
+
+    for(const param in qs) {
+        if(search_items.length === 0) {
+            search_items = items.filter(item => item[param] === qs[param])
+        } else {
+            search_items = search_items.filter(item => item[param] === qs[param])
+        }
+    }
+
+    if(search_items.length > 0) {
+        res.json(search_items)
+    } else {
+        res.sendStatus(404).json("Item not found")
+    }
+})
+
+
 let apiInstance = null;
 exports.start = () => {
     apiInstance = app.listen(port, () => {
@@ -248,6 +271,23 @@ let items = [
         },
         price: 100.00,
         postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    },
+    {
+        id: uuidv4(),
+        title: "Puuhöylä",
+        description: "Ei ollu puuhöylä",
+        category: "Työkalut",
+        location: "Helsinki",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 145.00,
+        postDate: "2020-10-08",
         deliverType: true,
         contactInfo: "t8hosa01@students.oamk.fi"
     }
