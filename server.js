@@ -5,7 +5,13 @@ const { v4: uuidv4 } = require('uuid');
 const http = require('http')
 const url = require('url')
 
+const fs = require('fs');
+const multer  = require('multer');
+const multerUpload = multer({ dest: 'uploads/' });
+const router = express.Router();
+
 const app = express();
+app.use('/',router);
 //const users = require('./services/users');
 const port = 3000
 
@@ -14,8 +20,10 @@ app.use(bodyparser.json());
 ////////User authentication
 const passport = require('passport');
 const { Passport } = require('passport');
+const { query, response } = require('express');
+const { json } = require('body-parser');
+const { Console } = require('console');
 const BasicStrategy = require('passport-http').BasicStrategy;
-
 
 passport.use(new BasicStrategy(
     function(username, password, done) {
@@ -33,9 +41,10 @@ passport.use(new BasicStrategy(
             console.log("HTTP Basic password not matching username");
             return done(null, false);
         }
-        console.log(username);
-        validateApiKey(username)
-        return done(null, username);
+        
+        let apikey = validateApiKey(username)
+        console.log("Apikey " + apikey + " send to user "  + username);
+        return done(null, {username: username, apikey: apikey });
     }
 ));
 
@@ -43,7 +52,6 @@ passport.use(new BasicStrategy(
 ///////ApiKey validation
 function validateApiKey (username) {
     let apikey = null;
-    console.log(username);
     const user = users.find(u => u.username == username);
     if(user === undefined){
         apikey = false
@@ -52,7 +60,6 @@ function validateApiKey (username) {
     }
     if(apikey === false) // user not found
     {
-        //res.sendStatus(400);
         console.log("HTTP Basic ApiKey not found");
     }
     if(apikey === null)
@@ -64,10 +71,10 @@ function validateApiKey (username) {
             user.apikey = uuidv4();
             apikey = user.apikey;
         }
-        
         console.log("HTTP Basic ApiKey is null");
+        console.log("Generating ApiKey...");
     }
-    console.log(apikey)
+
     return apikey
 }
 
@@ -119,7 +126,13 @@ app.post('/register', (req, res) => {
 
     const hashedPasswoed = bcrypt.hashSync(req.body.password, 6);
     console.log("HASH: " + String(hashedPasswoed));
-    users.addUser(req.body.username, req.body.email, hashedPasswoed)
+    users.push({
+        id: uuidv4(),
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPasswoed,
+        apikey: null
+    });
 
     console.log(req.body);
 
@@ -129,7 +142,8 @@ app.post('/register', (req, res) => {
 
 ///////Login
 app.get('/login', passport.authenticate('basic', { session: false }), (req, res) => {
-    res.sendStatus(200).json({status: "OK"});
+    
+    res.json({apikey: req.user.apikey});
 });
 
 
@@ -147,8 +161,21 @@ app.get('/items', (req, res) => {
 })
 
 
-// List new item
-app.post('/items', checkForApiKey, (req, res) => {
+// List new item (without authorization check)
+app.post('/items', multerUpload.array('img', 4), (req, res) => {
+    var imgArray = [];
+    try{
+        //console.log(req.files);
+        req.files.forEach(f => {
+            fs.renameSync(f.path, './uploads/' + f.originalname)
+            imgArray.push(f.path);
+        })
+    }catch{
+        //console.log("No Images");
+    }
+    for (i = imgArray.length; i < 4; i++){
+        imgArray[i] = null;
+    }
     const newItem = {
         id: uuidv4(),
         title:  req.body.title,
@@ -156,10 +183,10 @@ app.post('/items', checkForApiKey, (req, res) => {
         category: req.body.category,
         location: req.body.location,
         images: {
-            image1: req.body.images.image1,
-            image2: req.body.images.image2,
-            image3: req.body.images.image3,
-            image4: req.body.images.image4
+            image1: imgArray[0],
+            image2: imgArray[1],
+            image3: imgArray[2],
+            image4: imgArray[3]
         },
         price: req.body.price,
         postDate: req.body.postDate,
@@ -167,7 +194,7 @@ app.post('/items', checkForApiKey, (req, res) => {
         contactInfo: req.body.contactInfo
     }
     items.push(newItem)
-    res.sendStatus(200)
+    res.json(newItem)
 })
 
 
@@ -244,7 +271,7 @@ let users = [
         username: "Esko Ravonsuo",
         email: "e.ravonsuo@email.com",
         password: "$2b$06$2sFvJIiEh/prhBXCbQDeRurvb6blx4yK2N8O4do6zUxiG/cLDABuC", //S4l4s4n4
-        apikey: null
+        apikey: "28003bf1-d64e-4bce-800a-19d76c96ea4e"
     },
     {
         id: "70d3ffc4-1916-4a46-85b9-274c7d4c7141",
@@ -258,10 +285,61 @@ let users = [
 
 let items = [
     {
+        id: "KEKE",
+        title: "Kuukupööpötin",
+        description: "Ihan ite nikkaroin",
+        category: "Koriste-esineet", ///Koriste-esineet
+        location: "Oulu",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 100.00,
+        postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    },
+    {
+        id: "KEKE",
+        title: "Kuukupööpötin",
+        description: "Ihan ite nikkaroin",
+        category: "U", ///Koriste-esineet
+        location: "Helsinki",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 100.00,
+        postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    },
+    {
         id: uuidv4(),
         title: "Kuukupööpötin",
         description: "Ihan ite nikkaroin",
-        category: "Koriste-esineet",
+        category: "K", ///Koriste-esineet
+        location: "Helsinki",
+        images: {
+            image1: null,
+            image2: null,
+            image3: null,
+            image4: null
+        },
+        price: 100.00,
+        postDate: "2020-10-07",
+        deliverType: true,
+        contactInfo: "t8hosa01@students.oamk.fi"
+    },
+    {
+        id: uuidv4(),
+        title: "Kuukupööpötin",
+        description: "Ihan ite nikkaroin",
+        category: "K", ///Koriste-esineet
         location: "Oulu",
         images: {
             image1: null,
@@ -292,3 +370,4 @@ let items = [
         contactInfo: "t8hosa01@students.oamk.fi"
     }
 ]
+
