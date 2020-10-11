@@ -84,12 +84,12 @@ function checkForApiKey(req, res, next)
 {
   const receivedKey = req.get('apikey');
   if(receivedKey === undefined) {
-    return res.status(400).json({ reason: "X-Api-Key header missing"});
+    return res.status(401).json({Unauthorized: "Missing Api Key"});
   }
 
   const user = users.find(u => u.apikey == receivedKey);
   if(user === undefined) {
-    return res.status(400).json({ reason: "Incorrect api key"});
+    return res.status(400).json({ BadRequest: "Incorrect Api Key"});
   }
 
   req.user = user;
@@ -97,6 +97,13 @@ function checkForApiKey(req, res, next)
   // pass the control to the next handler in line
   next();
 }
+
+///////ApiKey Testing
+app.get('/apiKeyTest', checkForApiKey, (req, res) => {
+    res.json({
+        ApiKeyTest: "ApiKey OK"
+    })
+});
 
 
 ///////Get all users Testing
@@ -110,17 +117,17 @@ app.post('/register', (req, res) => {
 
     if('username' in req.body == false) {
         res.status(400);
-        res.json({status: "Missing username"});
+        res.json({BadRequest: "Missing username"});
         return;
     }
     if('email' in req.body == false) {
         res.status(400);
-        res.json({status: "Missing email"});
+        res.json({BadRequest: "Missing email"});
         return;
     }
     if('password' in req.body == false) {
         res.status(400);
-        res.json({status: "Missing password"});
+        res.json({BadRequest: "Missing password"});
         return;
     }
 
@@ -133,10 +140,8 @@ app.post('/register', (req, res) => {
         password: hashedPasswoed,
         apikey: null
     });
-
-    console.log(req.body);
-
-    res.sendStatus(200)
+    //console.log(req.body);
+    res.status(200).json({Created: "User successfully created"});
 })
 
 
@@ -147,35 +152,35 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
 });
 
 
-///////ApiKey Testing
-app.get('/apiKeyTest', checkForApiKey, (req, res) => {
-    res.json({
-      yourResource: "ApiOK"
-    })
-});
-
-
 // Get items
 app.get('/items', (req, res) => {
     res.json({items})
 })
 
 
-// List new item (without authorization check)
-app.post('/items', multerUpload.array('img', 4), (req, res) => {
-    var imgArray = [];
+//Get images from req (return array of image-paths)
+function img(req){
+    var array = []
     try{
         //console.log(req.files);
         req.files.forEach(f => {
-            fs.renameSync(f.path, './uploads/' + f.originalname)
-            imgArray.push(f.path);
+            fs.renameSync(f.path, './uploads/' + f.originalname);
+            array.push('./uploads/' + f.originalname);
         })
     }catch{
         //console.log("No Images");
     }
-    for (i = imgArray.length; i < 4; i++){
-        imgArray[i] = null;
+    //put image phat as null
+    for (i = array.length; i < 4; i++){
+        array[i] = null;
     }
+    return array
+}
+
+// List new item (without authorization check)
+app.post('/items', checkForApiKey, multerUpload.array('img', 4), (req, res) => {
+    var imgArray = img(req);
+    
     const newItem = {
         id: uuidv4(),
         title:  req.body.title,
@@ -194,20 +199,26 @@ app.post('/items', multerUpload.array('img', 4), (req, res) => {
         contactInfo: req.body.contactInfo
     }
     items.push(newItem)
-    res.json(newItem)
+    res.status(200).json({Created: "Item successfully created"})
 })
 
 
 // Modify item
-app.put('/items/:id', checkForApiKey, (req, res) => {
+app.put('/items/:id', checkForApiKey, multerUpload.array('img', 4),  (req, res) => {
     const result = items.find(t => t.id == req.params.id)
     if(result !== undefined) {
         for(const key in req.body) {
             result[key] = req.body[key]
         }
-        res.sendStatus(200)
+        var imgCount = 0
+        var imgArray = img(req);
+        for(const img in result["images"]){
+            result["images"][img] = imgArray[imgCount]
+            imgCount += 1
+        }
+        res.status(200).json({Modify: "Changes saved"})
     } else {
-        res.sendStatus(404).json("Item not found")
+        res.status(404).json({NotFound: "No item with this id"})
     }
     
 })
@@ -218,9 +229,9 @@ app.delete('/items/:id', checkForApiKey, (req, res) => {
     const result = items.findIndex(t => t.id == req.params.id)
     if(result !== -1) {
         items.splice(result, 1)
-        res.sendStatus(200)
+        res.status(200).json({Deleted: "Item has been deleted"})
     } else {
-        res.sendStatus(404).json("Item not found")
+        res.status(404).json({NotFound: "No item with this id"})
     }
 })
 
@@ -241,7 +252,7 @@ app.get('/items/search', (req, res) => {
     if(search_items.length > 0) {
         res.json(search_items)
     } else {
-        res.sendStatus(404).json("Item not found")
+        res.status(404).json({NotFound: "No item with this id"})
     }
 })
 
@@ -285,13 +296,13 @@ let users = [
 
 let items = [
     {
-        id: "KEKE",
-        title: "Kuukupööpötin",
-        description: "Ihan ite nikkaroin",
+        id: "testid",
+        title: "Test title",
+        description: "Test description",
         category: "Koriste-esineet", ///Koriste-esineet
         location: "Oulu",
         images: {
-            image1: null,
+            image1: "Phat/test",
             image2: null,
             image3: null,
             image4: null
@@ -299,10 +310,10 @@ let items = [
         price: 100.00,
         postDate: "2020-10-07",
         deliverType: true,
-        contactInfo: "t8hosa01@students.oamk.fi"
+        contactInfo: "test@test.com"
     },
     {
-        id: "KEKE",
+        id: uuidv4(),
         title: "Kuukupööpötin",
         description: "Ihan ite nikkaroin",
         category: "U", ///Koriste-esineet
