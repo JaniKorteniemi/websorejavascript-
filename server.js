@@ -99,10 +99,8 @@ function checkForApiKey(req, res, next)
 }
 
 ///////ApiKey Testing
-app.get('/apiKeyTest', checkForApiKey, (req, res) => {
-    res.json({
-        ApiKeyTest: "ApiKey OK"
-    })
+app.get('/apikeytest', checkForApiKey, (req, res) => {
+    res.status(200).json({ApiKeyTest: "ApiKey OK"})
 });
 
 
@@ -132,7 +130,6 @@ app.post('/register', (req, res) => {
     }
 
     const hashedPasswoed = bcrypt.hashSync(req.body.password, 6);
-    console.log("HASH: " + String(hashedPasswoed));
     users.push({
         id: uuidv4(),
         username: req.body.username,
@@ -141,7 +138,7 @@ app.post('/register', (req, res) => {
         apikey: null
     });
     //console.log(req.body);
-    res.status(200).json({Created: "User successfully created"});
+    res.status(201).json({Created: "User successfully created"});
 })
 
 
@@ -158,7 +155,7 @@ app.get('/', (res, req) => {
 
 // Get items
 app.get('/items', (req, res) => {
-    res.json({items})
+    res.json({result: items})
 })
 
 
@@ -181,8 +178,19 @@ function img(req){
     return array
 }
 
+//Check new item for missing properties
+const validateEmpty = (req, res, next) => {
+    const result = req.body
+    for(key in req.body){
+        if(req.body[key] === "" || req.body[key] === undefined || req.body[key] === null){
+            return res.status(400).json({ BadRequest: "Missing properties"})
+        }
+    }
+    next();
+}
+
 // List new item (without authorization check)
-app.post('/items', checkForApiKey, multerUpload.array('img', 4), (req, res) => {
+app.post('/items', checkForApiKey, multerUpload.array('img', 4), validateEmpty, (req, res) => {
     var imgArray = img(req);
     
     const newItem = {
@@ -203,7 +211,7 @@ app.post('/items', checkForApiKey, multerUpload.array('img', 4), (req, res) => {
         contactInfo: req.body.contactInfo
     }
     items.push(newItem)
-    res.status(200).json({Created: "Item successfully created"})
+    res.status(201).json({Created: "Item successfully created"})
 })
 
 
@@ -254,7 +262,7 @@ app.get('/items/search', (req, res) => {
     }
 
     if(search_items.length > 0) {
-        res.json(search_items)
+        res.status(200).json({results: search_items})
     } else {
         res.status(404).json({NotFound: "No item with this id"})
     }
@@ -303,8 +311,8 @@ let items = [
         id: "testid",
         title: "Test title",
         description: "Test description",
-        category: "Koriste-esineet", ///Koriste-esineet
-        location: "Oulu",
+        category: "test category",
+        location: "test location",
         images: {
             image1: "Phat/test",
             image2: null,
@@ -320,7 +328,7 @@ let items = [
         id: uuidv4(),
         title: "Kuukupööpötin",
         description: "Ihan ite nikkaroin",
-        category: "U", ///Koriste-esineet
+        category: "Koriste-esineet",
         location: "Helsinki",
         images: {
             image1: null,
@@ -331,30 +339,30 @@ let items = [
         price: 100.00,
         postDate: "2020-10-07",
         deliverType: true,
-        contactInfo: "t8hosa01@students.oamk.fi"
+        contactInfo: "test@test.com"
     },
     {
         id: uuidv4(),
-        title: "Kuukupööpötin",
-        description: "Ihan ite nikkaroin",
-        category: "K", ///Koriste-esineet
-        location: "Helsinki",
+        title: "Faro Lena table lamp",
+        description: "A modern design luminaire that is suitable for both interior and reading lighting.",
+        category: "Koriste-esineet",
+        location: "Tampere",
         images: {
             image1: null,
             image2: null,
             image3: null,
             image4: null
         },
-        price: 100.00,
+        price: 20.00,
         postDate: "2020-10-07",
-        deliverType: true,
-        contactInfo: "t8hosa01@students.oamk.fi"
+        deliverType: false,
+        contactInfo: "test@test.com"
     },
     {
         id: uuidv4(),
-        title: "Kuukupööpötin",
-        description: "Ihan ite nikkaroin",
-        category: "K", ///Koriste-esineet
+        title: "Antenna connector",
+        description: "The connectors in the picture are 1 eur full satsi",
+        category: "Electronics",
         location: "Oulu",
         images: {
             image1: null,
@@ -362,10 +370,10 @@ let items = [
             image3: null,
             image4: null
         },
-        price: 100.00,
+        price: 1.00,
         postDate: "2020-10-07",
         deliverType: true,
-        contactInfo: "t8hosa01@students.oamk.fi"
+        contactInfo: "test@test.com"
     },
     {
         id: uuidv4(),
