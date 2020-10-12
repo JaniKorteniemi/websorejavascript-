@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/48832036-91a9-491c-9965-666b7f4a448f/resourceGroups/web-store-api/providers/Microsoft.Web/sites/web-store-graded",
-    "appService.deploySubpath": "."
-}
