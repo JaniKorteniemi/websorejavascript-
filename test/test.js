@@ -322,17 +322,14 @@ describe('Mocha Testing implementation', function() {
                     .post('/items')
                     .set('apikey', apikey)
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_1.jpg')
-                    .send({
-                        title: "Microwave",
-                        description: "Almost new microwave",
-                        category: "Electronics",
-                        location: "Oulu",
-                        price: 70.00,
-                        postDate: "2020-05-05",
-                        deliverType: true,
-                        contactInfo: "test@test.com"
-    
-                    })
+                    .field('title','Microwave')
+                    .field('description','Almost new microwave')
+                    .field('category','Electronics')
+                    .field('location','Oulu')
+                    .field('price', 70.00)
+                    .field('postDate','2020-05-05')
+                    .field('deliverType',true)
+                    .field('contactInfo','test@test.com')
                     .then(response => {
                     expect(response.status).to.equal(201);
                     expect(response.body).to.be.a('Object');
@@ -351,17 +348,14 @@ describe('Mocha Testing implementation', function() {
                     .set('apikey', apikey)
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_2.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_2.jpg')
-                    .send({
-                        title: "Circular saw blade",
-                        description: "blade according to the picture circular diameter 68cm middle hole 40mm",
-                        category: "Tools",
-                        location: "Oulu",
-                        price: 30.00,
-                        postDate: "2020-11-13",
-                        deliverType: true,
-                        contactInfo: "test@test.com"
-    
-                    })
+                    .field('title','Circular saw blade')
+                    .field('description','blade according to the picture circular diameter 68cm middle hole 40mm')
+                    .field('category','Tools')
+                    .field('location','Oulu')
+                    .field('price', 30.00)
+                    .field('postDate','2020-11-13')
+                    .field('deliverType',true)
+                    .field('contactInfo','test@test.com')
                     .then(response => {
                     expect(response.status).to.equal(201);
                     expect(response.body).to.be.a('Object');
@@ -381,17 +375,14 @@ describe('Mocha Testing implementation', function() {
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_3.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_3.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test3_3.jpg')
-                    .send({
-                        title: "Sander",
-                        description: "Grinding machine for sale. As shown in the pictures",
-                        category: "Tools",
-                        location: "Tampere",
-                        price: 60.00,
-                        postDate: "2020-05-04",
-                        deliverType: false,
-                        contactInfo: "test@test.com"
-    
-                    })
+                    .field('title','Sander')
+                    .field('description','Grinding machine for sale. As shown in the pictures')
+                    .field('category','Tools')
+                    .field('location','Tampere')
+                    .field('price',60.00)
+                    .field('postDate','2020-05-04')
+                    .field('deliverType',true)
+                    .field('contactInfo','test@test.com')
                     .then(response => {
                     expect(response.status).to.equal(201);
                     expect(response.body).to.be.a('Object');
@@ -412,17 +403,14 @@ describe('Mocha Testing implementation', function() {
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_4.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test3_4.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test4_4.jpg')
-                    .send({
-                        title: "Huawei P20 Pro",
-                        description: "A smartphone in excellent condition, water and dust resistant",
-                        category: "Electronics",
-                        location: "Helsinki",
-                        price: 50.00,
-                        postDate: "2020-05-05",
-                        deliverType: false,
-                        contactInfo: "test@test.com"
-    
-                    })
+                    .field('title','Huawei P20 Pro')
+                    .field('description','A smartphone in excellent condition, water and dust resistant')
+                    .field('category','Electronics')
+                    .field('location','Helsinki')
+                    .field('price',50.00)
+                    .field('postDate','2020-05-05')
+                    .field('deliverType',true)
+                    .field('contactInfo','test@test.com')
                     .then(response => {
                     expect(response.status).to.equal(201);
                     expect(response.body).to.be.a('Object');
@@ -495,15 +483,12 @@ describe('Mocha Testing implementation', function() {
                     .set('apikey', apikey)
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_5.jpg')
                     .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_5.jpg')
-                    .send({
-                        title: "B & O Beoplay H8",
-                        description: "For sale beoplay H8 bluetooth anti-noise headphones.",
-                        category: "Electronics",
-                        location: "Tampere",
-                        postDate: "2020-11-13",
-                        deliverType: false,
-    
-                    })
+                    .field('title','B & O Beoplay H8')
+                    .field('description','For sale beoplay H8 bluetooth anti-noise headphones.')
+                    .field('category','Electronics')
+                    .field('location','Tampere')
+                    .field('postDate','2020-11-13')
+                    .field('deliverType',false)
                     .then(response => {
                     expect(response.status).to.equal(200);
                     expect(response.body).to.be.a('Object');
