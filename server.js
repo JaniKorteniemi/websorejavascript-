@@ -155,7 +155,7 @@ app.get('/', (res, req) => {
 
 // Get items
 app.get('/items', (req, res) => {
-    res.json({items})
+    res.json({result: items})
 })
 
 
@@ -262,7 +262,7 @@ app.get('/items/search', (req, res) => {
     }
 
     if(search_items.length > 0) {
-        res.json({results: search_items})
+        res.status(200).json({results: search_items})
     } else {
         res.status(404).json({NotFound: "No item with this id"})
     }
