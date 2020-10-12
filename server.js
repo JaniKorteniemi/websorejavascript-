@@ -13,7 +13,7 @@ const router = express.Router();
 const app = express();
 app.use('/',router);
 //const users = require('./services/users');
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(bodyparser.json());
 
