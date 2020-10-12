@@ -148,9 +148,10 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
     res.json({apikey: req.user.apikey});
 });
 
-// Frontpage
-app.get('/', (res, req) => {
-    res.json("Webstore API")
+
+//Frontpage
+app.get('/', (req, res) => {
+    res.send("Webstore API")
 })
 
 // Get items
