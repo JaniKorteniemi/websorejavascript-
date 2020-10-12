@@ -321,7 +321,7 @@ describe('Mocha Testing implementation', function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test1_1.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_1.jpg')
                     .send({
                         title: "Microwave",
                         description: "Almost new microwave",
@@ -349,8 +349,8 @@ describe('Mocha Testing implementation', function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test1_2.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test2_2.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_2.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_2.jpg')
                     .send({
                         title: "Circular saw blade",
                         description: "blade according to the picture circular diameter 68cm middle hole 40mm",
@@ -378,9 +378,9 @@ describe('Mocha Testing implementation', function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test1_3.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test2_3.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test3_3.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_3.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_3.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test3_3.jpg')
                     .send({
                         title: "Sander",
                         description: "Grinding machine for sale. As shown in the pictures",
@@ -408,10 +408,10 @@ describe('Mocha Testing implementation', function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test1_4.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test2_4.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test3_4.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test4_4.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_4.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_4.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test3_4.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test4_4.jpg')
                     .send({
                         title: "Huawei P20 Pro",
                         description: "A smartphone in excellent condition, water and dust resistant",
@@ -493,8 +493,8 @@ describe('Mocha Testing implementation', function() {
                 await chai.request(apiAddress)
                     .put('/items/testid')
                     .set('apikey', apikey)
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test1_5.jpg')
-                    .attach('img', fs.readFileSync('./testimg/test1.jpg'),'test2_5.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test1_5.jpg')
+                    .attach('img', fs.readFileSync('./test/testimg/test1.jpg'),'test2_5.jpg')
                     .send({
                         title: "B & O Beoplay H8",
                         description: "For sale beoplay H8 bluetooth anti-noise headphones.",
