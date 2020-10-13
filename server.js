@@ -13,7 +13,7 @@ const router = express.Router();
 const app = express();
 app.use('/',router);
 //const users = require('./services/users');
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(bodyparser.json());
 
@@ -148,9 +148,10 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
     res.json({apikey: req.user.apikey});
 });
 
-// Frontpage
-app.get('/', (res, req) => {
-    res.json("Webstore API")
+
+//Frontpage
+app.get('/', (req, res) => {
+    res.send("Webstore API")
 })
 
 // Get items
