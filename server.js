@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const http = require('http')
 const url = require('url')
-
+const path = require('path')
 const fs = require('fs');
 const multer  = require('multer');
 const multerUpload = multer({ dest: 'uploads/' });
@@ -23,6 +23,7 @@ const { Passport } = require('passport');
 const { query, response } = require('express');
 const { json } = require('body-parser');
 const { Console } = require('console');
+const { dirname } = require('path');
 const BasicStrategy = require('passport-http').BasicStrategy;
 
 passport.use(new BasicStrategy(
@@ -151,7 +152,7 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
 
 //Frontpage
 app.get('/', (req, res) => {
-    res.sendFile("./index.html")
+    res.sendFile(path.join(__dirname+"/index.html"))
 })
 
 // Get items
