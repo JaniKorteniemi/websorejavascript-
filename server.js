@@ -151,7 +151,7 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
 
 //Frontpage
 app.get('/', (req, res) => {
-    res.send("Webstore API")
+    res.sendFile("./index.html")
 })
 
 // Get items
