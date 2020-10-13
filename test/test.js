@@ -219,23 +219,23 @@ describe('Mocha Testing implementation', function() {
                     .then(response => {
                         expect(response.status).to.equal(200);
                         expect(response.body).to.be.a('object');
-                        expect(response.body).to.have.a.property('items');
-                        expect(response.body.items).to.be.a('array');
-                        expect(response.body.items[0]).to.be.a('object');
-                        expect(response.body.items[0]).to.be.of.property('id');
-                        expect(response.body.items[0]).to.be.of.property('title');
-                        expect(response.body.items[0]).to.be.of.property('description');
-                        expect(response.body.items[0]).to.be.of.property('category');
-                        expect(response.body.items[0]).to.be.of.property('location');
-                        expect(response.body.items[0].images).to.be.a('object');
-                        expect(response.body.items[0].images).to.be.of.property('image1');
-                        expect(response.body.items[0].images).to.be.of.property('image2');
-                        expect(response.body.items[0].images).to.be.of.property('image3');
-                        expect(response.body.items[0].images).to.be.of.property('image4');
-                        expect(response.body.items[0]).to.be.of.property('price');
-                        expect(response.body.items[0]).to.be.of.property('postDate');
-                        expect(response.body.items[0]).to.be.of.property('deliverType');
-                        expect(response.body.items[0]).to.be.of.property('contactInfo');
+                        expect(response.body).to.be.of.property('results');
+                        expect(response.body.results).to.be.a('array');
+                        expect(response.body.results[0]).to.be.a('object');
+                        expect(response.body.results[0]).to.be.of.property('id');
+                        expect(response.body.results[0]).to.be.of.property('title');
+                        expect(response.body.results[0]).to.be.of.property('description');
+                        expect(response.body.results[0]).to.be.of.property('category');
+                        expect(response.body.results[0]).to.be.of.property('location');
+                        expect(response.body.results[0].images).to.be.a('object');
+                        expect(response.body.results[0].images).to.be.of.property('image1');
+                        expect(response.body.results[0].images).to.be.of.property('image2');
+                        expect(response.body.results[0].images).to.be.of.property('image3');
+                        expect(response.body.results[0].images).to.be.of.property('image4');
+                        expect(response.body.results[0]).to.be.of.property('price');
+                        expect(response.body.results[0]).to.be.of.property('postDate');
+                        expect(response.body.results[0]).to.be.of.property('deliverType');
+                        expect(response.body.results[0]).to.be.of.property('contactInfo');
                 })
                     .catch(error => {
                         expect.fail(error)
@@ -290,7 +290,7 @@ describe('Mocha Testing implementation', function() {
     
             //2.3: adding new item with images
             describe('CREATE new item with NO IMAGES', function() {
-                it('Should add new item, response with status 201 and json ({Created: "Item successfully created"})', async function() {
+                it('Should add new item, response with status 201 and json ({Created: "Posting successfully created"})', async function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
@@ -317,7 +317,7 @@ describe('Mocha Testing implementation', function() {
 
             //2.4: adding new item with one images
             describe('CREATE new item with ONE IMAGE', function() {
-                it('Should add new item, response with status 201 and json ({Created: "Item successfully created"})', async function() {
+                it('Should add new item, response with status 201 and json ({Created: "Posting successfully created"})', async function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
@@ -342,7 +342,7 @@ describe('Mocha Testing implementation', function() {
 
             //2.5: adding new item with two images
             describe('CREATE new item with TWO IMAGES', function() {
-                it('Should add new item, response with status 201 and json ({Created: "Item successfully created"})', async function() {
+                it('Should add new item, response with status 201 and json ({Created: "Posting successfully created"})', async function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
@@ -368,7 +368,7 @@ describe('Mocha Testing implementation', function() {
 
             //2.6: adding new item with three images
             describe('CREATE new item with THREE IMAGES', function() {
-                it('Should add new item, response with status 201 and json ({Created: "Item successfully created"})', async function() {
+                it('Should add new item, response with status 201 and json ({Created: "Posting successfully created"})', async function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
@@ -395,7 +395,7 @@ describe('Mocha Testing implementation', function() {
 
             //2.7: adding new item with four images
             describe('CREATE new item with FOUR IMAGES', function() {
-                it('Should add new item, response with status 201 and json ({Created: "Item successfully created"})', async function() {
+                it('Should add new item, response with status 201 and json ({Created: "Posting successfully created"})', async function() {
                 await chai.request(apiAddress)
                     .post('/items')
                     .set('apikey', apikey)
@@ -427,7 +427,7 @@ describe('Mocha Testing implementation', function() {
 
             //3.1: Fail no match for id
             describe('Trying to MODIFYING item WITHOUT APIKEY', function() {
-                it('Response with status 404 and json ({NotFound: "No item with this id"})', async function() {
+                it('Response with status 404 and json ({NotFound: "No posting with this id"})', async function() {
                 await chai.request(apiAddress)
                     .put('/items/1111')
                     .set('apikey', apikey)
@@ -452,7 +452,7 @@ describe('Mocha Testing implementation', function() {
 
             //3.2: Fail no match for id
             describe('MODIFYING item with NO ID to MATCH', function() {
-                it('Response with status 404 and json ({NotFound: "No item with this id"})', async function() {
+                it('Response with status 404 and json ({NotFound: "No posting with this id"})', async function() {
                 await chai.request(apiAddress)
                     .put('/items/1111')
                     .set('apikey', apikey)
@@ -518,7 +518,7 @@ describe('Mocha Testing implementation', function() {
             });
 
             describe('DELETE item WITH NO ID to MATCH', function() {
-                it('Should response with status 404 and json ({NotFound: "No item with this id"})', async function() {
+                it('Should response with status 404 and json ({NotFound: "No posting with this id"})', async function() {
                 await chai.request(apiAddress)
                     .delete('/items/1111')
                     .set('apikey', apikey)
@@ -533,7 +533,7 @@ describe('Mocha Testing implementation', function() {
             });
 
             describe('DELETE item WITH ID to MATCH', function() {
-                it('Should Delete item, response with status 200 and json ({Deleted: "Item has been deleted"})', async function() {
+                it('Should Delete item, response with status 200 and json ({Deleted: "Posting has been deleted"})', async function() {
                 await chai.request(apiAddress)
                     .delete('/items/testid')
                     .set('apikey', apikey)

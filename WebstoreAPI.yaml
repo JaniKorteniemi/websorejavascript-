@@ -1,0 +1,567 @@
+openapi: 3.0.0
+info:
+  title: web store
+  version: '1.0'
+  contact:
+    name: Jani korteniemi
+    email: t7koja01@students.oamk.fi
+    url: none
+  license:
+    name: MIT
+    url: none
+  description: Building Cloud Integration Graded Exercise
+  termsOfService: none
+servers:
+  - url: 'https://cloud-integration-api.herokuapp.com'
+    description: Webstore API
+paths:
+  /register:
+    post:
+      summary: Register User
+      operationId: post-user
+      responses:
+        '201':
+          description: Post user response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Created:
+                    type: string
+              examples:
+                Post user response:
+                  value:
+                    Created: User successfully created
+        '400':
+          description: Post user Bad Request response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BadRequest:
+                    type: string
+              examples:
+                Post user Missing username response:
+                  value:
+                    BadRequest: Missing username
+                Post user Missing email response:
+                  value:
+                    BadRequest: Missing email
+                Post user Missing password response:
+                  value:
+                    BadRequest: Missing password
+      description: Create User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - email
+                - password
+            examples:
+              Post user request:
+                value:
+                  username: string
+                  email: user@example.com
+                  password: pa$$word
+        description: Post user request as json object
+    parameters: []
+  /login:
+    get:
+      summary: Login
+      operationId: get-login
+      responses:
+        '200':
+          description: Login response as json object (APIKEY!)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apikey:
+                    type: string
+              examples:
+                Login response:
+                  value:
+                    apikey: 28003bf1-d64e-4bce-800a-19d76c96ea4e
+        '401':
+          description: Login Unauthorized response as "Unauthorized"
+      security:
+        - username - password: []
+      description: User login. Enter username and password. Get ApiKey in response
+  /items:
+    get:
+      summary: Get postings
+      tags: []
+      responses:
+        '200':
+          description: Get postings response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  category:
+                    type: string
+                  location:
+                    type: string
+                  images:
+                    type: object
+                    properties:
+                      image1:
+                        type:
+                          - string
+                          - 'null'
+                      image2:
+                        type:
+                          - string
+                          - 'null'
+                      image3:
+                        type:
+                          - string
+                          - 'null'
+                      image4:
+                        type:
+                          - string
+                          - 'null'
+                  price:
+                    type: number
+                  postDate:
+                    type: string
+                  deliverType:
+                    type: boolean
+                  contactInfo:
+                    type: string
+              examples:
+                Get postings response:
+                  value:
+                    id: 70d3ffc4-1916-4a46-85b9-274c7d4c7141
+                    title: Antenna connector
+                    description: The connectors in the picture are 1 eur full satsi
+                    category: Electronics
+                    location: Oulu
+                    images:
+                      image1: uploads\exampleIMG.png
+                      image2: uploads\exampleIMG2.jpg
+                      image3: null
+                      image4: null
+                    price: 1
+                    postDate: '2020-10-07'
+                    deliverType: true
+                    contactInfo: test@test.com
+      operationId: get-items
+      description: Get all postings
+    post:
+      summary: Post new posting
+      operationId: post-items
+      responses:
+        '201':
+          description: Post posting response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Created:
+                    type: string
+              examples:
+                Post posting response:
+                  value:
+                    Created: Posting successfully created
+        '400':
+          description: Post posting Bad Request response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BadRequest:
+                    type: string
+              examples:
+                Post posting Bad Request response:
+                  value:
+                    BadRequest: Missing properties
+        '401':
+          description: Post posting Unauthorized response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Unauthorized:
+                    type: string
+              examples:
+                Post posting Unauthorized response:
+                  value:
+                    Unauthorized: Missing Api Key
+      description: Create new posting. Apikey required
+      security:
+        - API Key: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                location:
+                  type: string
+                images:
+                  type: object
+                  properties:
+                    img1:
+                      type:
+                        - string
+                        - 'null'
+                    img2:
+                      type:
+                        - string
+                        - 'null'
+                    img3:
+                      type:
+                        - string
+                        - 'null'
+                    img4:
+                      type:
+                        - string
+                        - 'null'
+                price:
+                  type: number
+                postdate:
+                  type: string
+                  format: date
+                deliverytype:
+                  type: boolean
+                contactinfo:
+                  type: string
+              required:
+                - title
+                - description
+                - category
+                - location
+                - images
+                - price
+                - postdate
+                - deliverytype
+                - contactinfo
+            examples:
+              Post posting request:
+                value:
+                  title: Antenna connector
+                  description: The connectors in the picture are 1 eur full satsi
+                  category: Electronics
+                  location: Oulu
+                  images:
+                    image1: uploads\exampleIMG.png
+                    image2: uploads\exampleIMG2.jpg
+                    image3: null
+                    image4: null
+                  price: 1
+                  postDate: '2020-10-07'
+                  deliverType: true
+                  contactInfo: test@test.com
+        description: Post posting request as json object
+  '/items/{itemId}':
+    parameters:
+      - schema:
+          type: string
+        name: itemId
+        in: path
+        required: true
+    put:
+      summary: Modify item
+      operationId: put-item-id
+      responses:
+        '200':
+          description: Put posting response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Modify:
+                    type: string
+              examples:
+                Put posting response:
+                  value:
+                    Modify: Changes saved
+        '400':
+          description: Put posting Bad Request response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BadRequest:
+                    type: string
+              examples:
+                Put posting Bad Request response:
+                  value:
+                    BadRequest: Incorrect Api Key
+        '401':
+          description: Put posting Unauthorized response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Unauthorized:
+                    type: string
+              examples:
+                Put posting Unauthorized response:
+                  value:
+                    Unauthorized: Missing Api Key
+        '404':
+          description: Put posting Not Found as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  NotFound:
+                    type: string
+              examples:
+                Put posting Not Found response:
+                  value:
+                    NotFound: No item with this id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                location:
+                  type: string
+                images:
+                  type: object
+                  properties:
+                    img1:
+                      type:
+                        - string
+                        - 'null'
+                    img2:
+                      type:
+                        - string
+                        - 'null'
+                    img3:
+                      type:
+                        - string
+                        - 'null'
+                    img4:
+                      type:
+                        - string
+                        - 'null'
+                price:
+                  type: number
+                postdate:
+                  type: string
+                  format: date
+                deliverytype:
+                  type: boolean
+                contactinfo:
+                  type: string
+            examples:
+              Put posting request example:
+                value:
+                  price: 30
+                  deliverytype: false
+        description: Put posting request as json object (not all properties required)
+      description: Update posting. Apikey required!
+      security:
+        - API Key: []
+    delete:
+      summary: Delete Posting
+      operationId: delete-item-id
+      responses:
+        '200':
+          description: Delete posting response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Deleted:
+                    type: string
+              examples:
+                Delete posting response:
+                  value:
+                    Deleted: Posting has been deleted
+        '400':
+          description: Delete posting Bad Request response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BadRequest:
+                    type: string
+              examples:
+                Delete posting Bad Request response:
+                  value:
+                    BadRequest: Incorrect Api Key
+        '401':
+          description: Delete posting Unauthorized response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Unauthorized:
+                    type: string
+              examples:
+                Delete posting Unauthorized response:
+                  value:
+                    Unauthorized: Missing Api Key
+        '404':
+          description: Delete posting Not Found response as json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  NotFound:
+                    type: string
+              examples:
+                Not Found response:
+                  value:
+                    NotFound: No post with this id
+      description: Delete Posting. Apikey required!
+      security:
+        - API Key: []
+  /items/search:
+    get:
+      summary: Search Posting
+      tags: []
+      responses:
+        '200':
+          description: Get Search-postings response as json objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  category:
+                    type: string
+                  location:
+                    type: string
+                  images:
+                    type: object
+                    properties:
+                      img1:
+                        type:
+                          - string
+                          - 'null'
+                      img2:
+                        type:
+                          - string
+                          - 'null'
+                      img3:
+                        type:
+                          - string
+                          - 'null'
+                      img4:
+                        type:
+                          - string
+                          - 'null'
+                  price:
+                    type: number
+                  postdate:
+                    type: string
+                    format: date
+                  deliverytype:
+                    type: boolean
+                  contectinfo:
+                    type: string
+                  id:
+                    type: string
+              examples:
+                Search postings response:
+                  value:
+                    id: 70d3ffc4-1916-4a46-85b9-274c7d4c7141
+                    title: Antenna connector
+                    description: The connectors in the picture are 1 eur full satsi
+                    category: Electronics
+                    location: Oulu
+                    images:
+                      image1: uploads\exampleIMG.png
+                      image2: uploads\exampleIMG2.jpg
+                      image3: null
+                      image4: null
+                    price: 1
+                    postDate: '2020-10-07'
+                    deliverType: true
+                    contactInfo: test@test.com
+        '404':
+          description: Get Search-posting Not Found response ass json object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  NotFound:
+                    type: string
+              examples:
+                Get Search-posting not Found response:
+                  value:
+                    NotFound: No posting with this id
+      operationId: get-items-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: category
+          description: Category of an item
+        - schema:
+            type: string
+          in: query
+          name: location
+          description: Location of an item
+        - schema:
+            type: string
+          in: query
+          description: Date of posting
+          name: postdate
+      description: Search and get postings based on query. Responses with all matching postings (/items/search?location=Oulu)
+components:
+  schemas: {}
+  securitySchemes:
+    API Key:
+      name: API Key
+      type: apiKey
+      in: query
+    username - password:
+      type: http
+      scheme: basic
+      description: Username + password Authorisation

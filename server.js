@@ -31,19 +31,19 @@ passport.use(new BasicStrategy(
         const user = users.find(u => u.username == username);
         if(user == undefined) {
             // Username not found
-            console.log("HTTP Basic username not found" );
+            //console.log("HTTP Basic username not found" );
             return done(null, false);
         }
   
         /* Verify password match */
         if(bcrypt.compareSync(password, user.password) == false) {
             // Password does not match
-            console.log("HTTP Basic password not matching username");
+            //console.log("HTTP Basic password not matching username");
             return done(null, false);
         }
         
         let apikey = validateApiKey(username)
-        console.log("Apikey " + apikey + " send to user "  + username);
+        //console.log("Apikey " + apikey + " send to user "  + username);
         return done(null, {username: username, apikey: apikey });
     }
 ));
@@ -60,7 +60,7 @@ function validateApiKey (username) {
     }
     if(apikey === false) // user not found
     {
-        console.log("HTTP Basic ApiKey not found");
+        //console.log("HTTP Basic ApiKey not found");
     }
     if(apikey === null)
     {
@@ -71,8 +71,8 @@ function validateApiKey (username) {
             user.apikey = uuidv4();
             apikey = user.apikey;
         }
-        console.log("HTTP Basic ApiKey is null");
-        console.log("Generating ApiKey...");
+        //console.log("HTTP Basic ApiKey is null");
+        //console.log("Generating ApiKey...");
     }
 
     return apikey
@@ -105,7 +105,7 @@ app.get('/apikeytest', checkForApiKey, (req, res) => {
 
 
 ///////Get all users Testing
-app.get('/user', (req, res) => {
+app.get('/user', checkForApiKey, (req, res) => {
     res.json({users})
 })
 
@@ -155,7 +155,7 @@ app.get('/', (res, req) => {
 
 // Get items
 app.get('/items', (req, res) => {
-    res.json({result: items})
+    res.json({results: items})
 })
 
 
@@ -211,7 +211,7 @@ app.post('/items', checkForApiKey, multerUpload.array('img', 4), validateEmpty, 
         contactInfo: req.body.contactInfo
     }
     items.push(newItem)
-    res.status(201).json({Created: "Item successfully created"})
+    res.status(201).json({Created: "Posting successfully created"})
 })
 
 
@@ -230,7 +230,7 @@ app.put('/items/:id', checkForApiKey, multerUpload.array('img', 4),  (req, res) 
         }
         res.status(200).json({Modify: "Changes saved"})
     } else {
-        res.status(404).json({NotFound: "No item with this id"})
+        res.status(404).json({NotFound: "No posting with this id"})
     }
     
 })
@@ -241,9 +241,9 @@ app.delete('/items/:id', checkForApiKey, (req, res) => {
     const result = items.findIndex(t => t.id == req.params.id)
     if(result !== -1) {
         items.splice(result, 1)
-        res.status(200).json({Deleted: "Item has been deleted"})
+        res.status(200).json({Deleted: "Posting has been deleted"})
     } else {
-        res.status(404).json({NotFound: "No item with this id"})
+        res.status(404).json({NotFound: "No posting with this id"})
     }
 })
 
@@ -264,7 +264,7 @@ app.get('/items/search', (req, res) => {
     if(search_items.length > 0) {
         res.status(200).json({results: search_items})
     } else {
-        res.status(404).json({NotFound: "No item with this id"})
+        res.status(404).json({NotFound: "No posting with this id"})
     }
 })
 
@@ -294,7 +294,7 @@ let users = [
         username: "Esko Ravonsuo",
         email: "e.ravonsuo@email.com",
         password: "$2b$06$2sFvJIiEh/prhBXCbQDeRurvb6blx4yK2N8O4do6zUxiG/cLDABuC", //S4l4s4n4
-        apikey: "28003bf1-d64e-4bce-800a-19d76c96ea4e"
+        apikey: null
     },
     {
         id: "70d3ffc4-1916-4a46-85b9-274c7d4c7141",
